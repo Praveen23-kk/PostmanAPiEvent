@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Mentorship Platform</title>
+    <meta name="description" content="Connect with mentors at our university. Send mentorship requests and stay connected.">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1E1E2F;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h1, h2 {
+            color: #D4C3E1;
+        }
+        .card {
+            background-color: #2A2A3D;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        input, select, textarea {
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            background-color: #3A3A4A;
+            color: #FFFFFF;
+        }
+        textarea {
+            resize: none;
+        }
+        button {
+            background-color: #6A5ACD;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 200px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #483D8B;
+        }
+        #mentor-list p {
+            background-color: #3A3A4A;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            color: #FFFFFF;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>University Mentorship Platform</h1>
+        
+        <div class="card">
+            <h2>Mentor List</h2>
+            <div id="mentor-list"></div>
+        </div>
+        
+        <div class="card">
+            <h2>Send Mentorship Request</h2>
+            <form id="mentorship-form">
+                <div class="form-group">
+                    <select id="mentor-select" required></select>
+                </div>
+                <div class="form-group">
+                    <textarea id="message" rows="5" placeholder="Your message to the mentor" required></textarea>
+                </div>
+                <button type="submit">Send Request</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const fetchMentors = async () => {
+            const response = await fetch('/api/mentors/');
+            const data = await response.json();
+            const mentorList = document.getElementById('mentor-list');
+            const mentorSelect = document.getElementById('mentor-select');
+
+            mentorList.innerHTML = '';
+            mentorSelect.innerHTML = ''; // Clear the mentor select options
+
+            data.forEach(mentor => {
+                mentorList.innerHTML += `<p>${mentor.name} (${mentor.expertise})</p>`;
+                mentorSelect.innerHTML += `<option value="${mentor.id}">${mentor.name}</option>`; // Add option for select
+            });
+        };
+
+        document.getElementById('mentorship-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const mentorId = document.getElementById('mentor-select').value;
+            const message = document.getElementById('message').value;
+
+            await fetch('/api/mentorship-request/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ mentorId, message }), // Send the mentorId and message in the request
+            });
+
+            alert('Mentorship request sent!');
+            document.getElementById('mentorship-form').reset();
+        });
+
+        // Fetch initial mentor list
+        fetchMentors();
+    </script>
+</body>
+</html>
