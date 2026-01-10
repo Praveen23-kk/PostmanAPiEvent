@@ -100,6 +100,5 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 - Django and Django REST Framework for the backend development.
 - HTML, CSS, and JavaScript for the frontend development.
-- All contributors and mentors who helped shape this project.
 
 ---
